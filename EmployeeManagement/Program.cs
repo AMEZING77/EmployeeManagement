@@ -1,18 +1,25 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
+var builder = WebApplication.CreateBuilder(args);
+
+//如何配置 mvc 的 Service
+builder.Services.Configure<MvcOptions>(options => options.EnableEndpointRouting = false);
+builder.Services.AddMvc();
+
+var app = builder.Build();
 #region 2024/12/05 20:40 如何配置异常界面
 //必须尽早插入
-if (builder.Environment.IsDevelopment())
-{
-    DeveloperExceptionPageOptions developerExceptionPageOptions = new DeveloperExceptionPageOptions()
+if (builder.Environment.IsEnvironment("ss"))
+    if (builder.Environment.IsDevelopment())
     {
-        SourceCodeLineCount = 3,
-    };
-    app.UseDeveloperExceptionPage(developerExceptionPageOptions);
-}
+        DeveloperExceptionPageOptions developerExceptionPageOptions = new DeveloperExceptionPageOptions()
+        {
+            SourceCodeLineCount = 3,
+        };
+        app.UseDeveloperExceptionPage(developerExceptionPageOptions);
+    }
 #endregion
-
 
 #region 2024/12/05 21:00 如何导入静态资源
 //使用静态资源文件
@@ -60,7 +67,12 @@ app.UseStaticFiles() 的作用：
 FileServerOptions fileServerOptions = new FileServerOptions();
 fileServerOptions.DefaultFilesOptions.DefaultFileNames.Clear();
 fileServerOptions.DefaultFilesOptions.DefaultFileNames.Add("abc.html");
-//app.UseFileServer(fileServerOptions);
+app.UseFileServer(fileServerOptions);
+
+
+//若此时输入其他Index,则默认转向下面的中间件
+app.UseMvcWithDefaultRoute();
+
 
 //由于本地存在 foo.html ,所以 pipeline 到此处终止，以下中间件不再运行
 //因为 UseFileServer 中间件在成功处理请求后，
@@ -82,16 +94,8 @@ fileServerOptions.DefaultFilesOptions.DefaultFileNames.Add("abc.html");
 app.Use(async (context, next) =>
 {
     app.Logger.LogInformation("Middleware 1 started");
-    try
-    {
-        app.Logger.LogInformation("Middleware 1 finished writing response");
-        await next();
-    }
-    catch (Exception ex)
-    {
-        app.Logger.LogError(ex, "An error occurred in Middleware 1");
-        context.Response.StatusCode = 500;
-    }
+    app.Logger.LogInformation("Middleware 1 finished writing response");
+    await next();
 });
 app.Use(async (context, next) =>
 {
