@@ -6,6 +6,9 @@ var builder = WebApplication.CreateBuilder(args);
 //如何配置 mvc 的 Service
 builder.Services.Configure<MvcOptions>(options => options.EnableEndpointRouting = false);
 builder.Services.AddMvc();
+//AddMvc（）内部 calls AddMvcCore() 
+//builder.Services.AddMvcCore();
+
 
 var app = builder.Build();
 #region 2024/12/05 20:40 如何配置异常界面
