@@ -1,14 +1,24 @@
+using EmployeeManagement.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//如何配置 mvc 的 Service
-builder.Services.Configure<MvcOptions>(options => options.EnableEndpointRouting = false);
-builder.Services.AddMvc();
-//AddMvc（）内部 calls AddMvcCore() 
-//builder.Services.AddMvcCore();
 
+{
+    //如何配置 mvc 的 Service
+    builder.Services.Configure<MvcOptions>(options => options.EnableEndpointRouting = false);
+    builder.Services.AddMvc().AddXmlDataContractSerializerFormatters();
+    //AddMvc（）内部 calls AddMvcCore() 
+    //builder.Services.AddMvcCore();
+
+    //AddSingleton  
+    builder.Services.AddSingleton<IEmployeeRepository, MockEmployeeRepository>();
+    ////AddTransient
+    //builder.Services.AddTransient<IEmployeeRepository, MockEmployeeRepository>();
+    ////AddScoped
+    //builder.Services.AddScoped<IEmployeeRepository, MockEmployeeRepository>();
+}
 
 var app = builder.Build();
 #region 2024/12/05 20:40 如何配置异常界面
