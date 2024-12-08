@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManagement.Controllers
 {
+    [Route("[controller]/[action]")]
     public class HomeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository;
@@ -12,6 +13,10 @@ namespace EmployeeManagement.Controllers
         {
             this._employeeRepository = employeeRepository;
         }
+
+        //默认定义此入口，可以减少 action 的引用
+        [Route("~/Home")]
+        [Route("~/Home3")]
         public ViewResult Index()
         {
             //return this.Json(_employeeRepository.GetEmployee(1));
@@ -32,8 +37,8 @@ namespace EmployeeManagement.Controllers
         {
             return new ObjectResult(_employeeRepository.GetEmployee(1));
         }
-
-        public ViewResult Details_View()
+        [Route("{id?}")]
+        public ViewResult Details(int id = 1)
         {
             //界面传参的三种方式
             //1、ViewData 自定义类型需要在 view 中进行 as 转换
@@ -45,17 +50,19 @@ namespace EmployeeManagement.Controllers
             ViewBag.Employee3 = model3;
             ViewBag.Title3 = model3?.Name ?? "空3";
             //3、Strongly typed 
-            Employee? model1 = _employeeRepository.GetEmployee(1);
+            Employee? model1 = _employeeRepository.GetEmployee(id);
             //return View(model1);
 
             //4、ViewModel
-            HomeDetails_ViewViewModel homeDetails = new HomeDetails_ViewViewModel()
+            HomeDetailsViewModel homeDetails = new HomeDetailsViewModel()
             {
                 Employee = model1,
                 PageTitle = "Title From ViewModel",
             };
 
+            //return View(homeDetails);
             return View(homeDetails);
+
 
 
         }

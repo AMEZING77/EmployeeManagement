@@ -84,7 +84,17 @@ app.UseFileServer(fileServerOptions);
 
 
 //若此时输入其他Index,则默认转向下面的中间件
-app.UseMvcWithDefaultRoute();
+//app.UseMvcWithDefaultRoute();
+
+//使用自定义路由
+app.UseMvc(routes =>
+{
+    routes.MapRoute("Default", "{controller=Home}/{action=Index}/{id?}");
+});
+
+//使用 Attribute Route
+//app.UseMvc();
+
 
 
 //由于本地存在 foo.html ,所以 pipeline 到此处终止，以下中间件不再运行
