@@ -1,4 +1,5 @@
-﻿namespace EmployeeManagement.Models
+﻿
+namespace EmployeeManagement.Models
 {
     public class MockEmployeeRepository : IEmployeeRepository
     {
@@ -8,10 +9,15 @@
         {
             _employeeList = new List<Employee>()
             {
-                new Employee(){Id=1,Name="Mary",Department="HR",Email="mary@emali" },
-                new Employee(){Id=1,Name="John",Department="IT",Email="john@emali" },
-                new Employee(){Id=1,Name="Sam",Department="IT",Email="sam@emali" },
+                new Employee(){Id=1,Name="Mary",Department="HR",Email="mary@email" },
+                new Employee(){Id=2,Name="John",Department="IT",Email="john@email" },
+                new Employee(){Id=3,Name="Sam",Department="IT",Email="sam@email" },
             };
+        }
+
+        public IEnumerable<Employee> GetAll()
+        {
+            return _employeeList;
         }
 
         public Employee? GetEmployee(int id)

@@ -4,6 +4,7 @@
     {
         Employee? GetEmployee(int id);
 
+        IEnumerable<Employee> GetAll();
 
     }
 }

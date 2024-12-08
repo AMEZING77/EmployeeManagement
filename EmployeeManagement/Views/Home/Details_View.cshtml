@@ -1,13 +1,64 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-
-
+﻿@* @model EmployeeManagement.Models.Employee *@
+@model EmployeeManagement.ViewModels.HomeDetails_ViewViewModel
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head><title></title></head>
-    <body>
-        <h1>Details_View from Views/Home Folder</h1>
-    </body>
+<head>
+    <title></title>
+</head>
+<body>
+    <h1>Details_View from Views/Home Folder</h1>
+    <!--类似于字符串的会默认转换ViewData和ViewBag-->
+    @{
+        var employee2 = ViewData["Employee2"] as EmployeeManagement.Models.Employee;
+        var employee3 = ViewBag.Employee3;
+    }
+    <p>ViewData Title=@ViewData["Title2"]</p>
+    <div>
+        Name:@employee2.Name
+    </div>
+    <div>
+        Department:@employee2.Department
+    </div>
+    <div>
+        Email:@employee2.Email
+    </div>
+
+    <p>-----------------------------------</p>
+
+    <p>ViewBag Title=@ViewBag.Title3</p>
+    <div>
+        Name:@employee3.Name
+    </div>
+    <div>
+        Department:@employee3.Department
+    </div>
+    <div>
+        Email:@employee3.Email
+    </div>
+
+    <p>-------------strongly typed----------------------</p>
+
+    @*     <div>
+    Name:@Model.Name
+    </div>
+    <div>
+    Department:@Model.Department
+    </div>
+    <div>
+    Email:@Model.Email
+    </div> *@
+
+    <p>--------------ViewModel---------------------</p>
+    <h2>@Model.PageTitle</h2>
+    <div>
+        Name:@Model.Employee.Name
+    </div>
+    <div>
+        Department:@Model.Employee.Department
+    </div>
+    <div>
+        Email:@Model.Employee.Email
+    </div>
+
+
+</body>
 </html>

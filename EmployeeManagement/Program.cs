@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 {
     //如何配置 mvc 的 Service
     builder.Services.Configure<MvcOptions>(options => options.EnableEndpointRouting = false);
-    builder.Services.AddMvc().AddXmlDataContractSerializerFormatters();
+    builder.Services.AddMvc()/*.AddXmlDataContractSerializerFormatters()*/;
     //AddMvc（）内部 calls AddMvcCore() 
     //builder.Services.AddMvcCore();
 
