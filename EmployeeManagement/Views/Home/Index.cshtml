@@ -4,7 +4,13 @@
 @{
 }
 
-@model IEnumerable< EmployeeManagement.Models.Employee>
+@model IEnumerable<Employee>
+
+<!--使用Layout-->
+@{
+    ViewBag.Title = "Home/Index Page";
+    // Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
 <table>
     <thead>
@@ -25,3 +31,7 @@
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script src="~/js/CustomScript.js"></script>
+}

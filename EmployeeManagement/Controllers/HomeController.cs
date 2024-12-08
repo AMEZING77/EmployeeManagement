@@ -16,7 +16,6 @@ namespace EmployeeManagement.Controllers
         {
             //return this.Json(_employeeRepository.GetEmployee(1));
             //return this.Json(new { id = 1, name = "zj" });
-
             var list = _employeeRepository.GetAll();
             return View(list);
         }
