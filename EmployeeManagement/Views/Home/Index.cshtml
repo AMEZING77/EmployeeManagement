@@ -1,10 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-
-@model IEnumerable<Employee>
+﻿@model IEnumerable<Employee>
 
 <!--使用Layout-->
 @{
@@ -12,7 +6,7 @@
     // Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<table>
+@* <table>
     <thead>
         <tr>
             <th>Name</th>
@@ -30,7 +24,35 @@
             </tr>
         }
     </tbody>
-</table>
+</table> *@
+
+
+<div class="card-group">
+    @foreach (var item in Model)
+    {
+        <div class="card m-3">
+            <div class="card-header">
+                <h1>@item.Name</h1>
+            </div>
+            <img class="card-img-top" src="~/images/2.png" />
+            <div class="card-footer text-center">
+                <!--注入链接的几种方式-->
+@*                 <a asp-controller="home" asp-action="details" asp-route-id="@item.Id" class="btn btn-primary">Display</a>
+                <a href=@Url.Action("details", "home", new { id = item.Id }) class="btn btn-primary">View</a>                
+                @Html.ActionLink("View", "details", "home", new { id = item.Id })
+                <a href="#" class="btn btn-primary">View</a>
+                <a href="#" class="btn btn-primary">Edit</a>
+                <a href="#" class="btn btn-primary">Delete</a> *@
+                <a asp-controller="home" asp-action="details" asp-route-id="@item.Id" class="btn btn-primary m-1">View</a>
+                <a href="#" class="btn btn-primary m-1">Edit</a>
+                <a href="#" class="btn btn-primary m-1">Delete</a>
+
+            </div>
+        </div>
+    }
+</div>
+
+
 
 @section Scripts {
     <script src="~/js/CustomScript.js"></script>

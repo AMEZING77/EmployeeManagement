@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManagement.Controllers
 {
-    [Route("[controller]/[action]")]
+    //[Route("[controller]/[action]")]
     public class HomeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository;
@@ -15,8 +15,7 @@ namespace EmployeeManagement.Controllers
         }
 
         //默认定义此入口，可以减少 action 的引用
-        [Route("~/Home")]
-        [Route("~/Home3")]
+        //[Route("~/Home")]
         public ViewResult Index()
         {
             //return this.Json(_employeeRepository.GetEmployee(1));
@@ -37,7 +36,7 @@ namespace EmployeeManagement.Controllers
         {
             return new ObjectResult(_employeeRepository.GetEmployee(1));
         }
-        [Route("{id?}")]
+        //[Route("{id?}")]
         public ViewResult Details(int id = 1)
         {
             //界面传参的三种方式
@@ -63,8 +62,11 @@ namespace EmployeeManagement.Controllers
             //return View(homeDetails);
             return View(homeDetails);
 
+        }
 
-
+        public ViewResult Create()
+        {
+            return View();
         }
 
     }

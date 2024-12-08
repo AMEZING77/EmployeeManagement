@@ -8,7 +8,7 @@
     // Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details_View from Views/Home Folder</h1>
+@* <h1>Details_View from Views/Home Folder</h1>
 <!--类似于字符串的会默认转换ViewData和ViewBag-->
 @{
     var employee2 = ViewData["Employee2"] as EmployeeManagement.Models.Employee;
@@ -48,7 +48,7 @@
     </div>
     <div>
     Email:@Model.Email
-    </div> *@
+    </div>
 
 <p>--------------ViewModel---------------------</p>
 <h2>@Model.PageTitle</h2>
@@ -60,4 +60,24 @@
 </div>
 <div>
     Email:@Model.Employee.Email
+</div> *@
+
+<div class="row justify-content-center m-3">
+    <div class="Col-sm-8">
+        <div class="card">
+            <h1>@Model.Employee.Name</h1>
+        </div>
+        <div class="card-body text-center">
+            <img class="card-img-top" src="~/images/2.png" />
+            <h4>Employee ID : @Model.Employee.Id</h4>
+            <h4>Employee Department : @Model.Employee.Department</h4>
+            <h4>Employee Email : @Model.Employee.Email</h4>
+        </div>
+        <div class="card-footer text-center">
+            @* <a href="#" class="btn btn-primary">Back</a> *@
+            <a asp-controller="home" asp-action="Index" class="btn btn-primary">Back</a>
+            <a href="#" class="btn btn-primary">Edit</a>
+            <a href="#" class="btn btn-primary">Delete</a>
+        </div>
+    </div>
 </div>
