@@ -63,10 +63,17 @@ namespace EmployeeManagement.Controllers
             return View(homeDetails);
 
         }
-
+        [HttpGet]
         public ViewResult Create()
         {
             return View();
+        }
+        [HttpPost]
+        public IActionResult Create(Employee employee)
+        {
+            if (!ModelState.IsValid) return View();
+            Employee newEmployee = _employeeRepository.Add(employee);
+            return RedirectToAction("details", new { id = newEmployee.Id });
         }
 
     }

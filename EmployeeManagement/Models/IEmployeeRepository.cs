@@ -6,5 +6,7 @@
 
         IEnumerable<Employee> GetAll();
 
+        Employee Add(Employee employee);
+
     }
 }
