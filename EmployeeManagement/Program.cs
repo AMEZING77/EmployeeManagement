@@ -1,11 +1,16 @@
 using EmployeeManagement.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
-
-
 {
+    //使用 AddDbContextPool 确保访问 pool 中已有的 AppDbContext
+    builder.Services.AddDbContextPool<AppDbContext>(optionsAction: options =>
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("EmployeeDBConnection"));
+    });
     //如何配置 mvc 的 Service
     builder.Services.Configure<MvcOptions>(options => options.EnableEndpointRouting = false);
     builder.Services.AddMvc()/*.AddXmlDataContractSerializerFormatters()*/;
@@ -13,7 +18,8 @@ var builder = WebApplication.CreateBuilder(args);
     //builder.Services.AddMvcCore();
 
     //AddSingleton  
-    builder.Services.AddSingleton<IEmployeeRepository, MockEmployeeRepository>();
+    //builder.Services.AddSingleton<IEmployeeRepository, MockEmployeeRepository>();
+    builder.Services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>();
     ////AddTransient
     //builder.Services.AddTransient<IEmployeeRepository, MockEmployeeRepository>();
     ////AddScoped
