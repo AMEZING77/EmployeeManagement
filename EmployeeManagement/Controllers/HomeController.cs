@@ -1,4 +1,5 @@
-﻿using EmployeeManagement.Models;
+﻿using System.Collections.Generic;
+using EmployeeManagement.Models;
 using EmployeeManagement.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,10 +9,13 @@ namespace EmployeeManagement.Controllers
     public class HomeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public HomeController(IEmployeeRepository employeeRepository)
+        public HomeController(IEmployeeRepository employeeRepository,
+            IWebHostEnvironment webHostEnvironment)
         {
             this._employeeRepository = employeeRepository;
+            this._webHostEnvironment = webHostEnvironment;
         }
 
         //默认定义此入口，可以减少 action 的引用
@@ -39,18 +43,26 @@ namespace EmployeeManagement.Controllers
         //[Route("{id?}")]
         public ViewResult Details(int id = 1)
         {
-            //界面传参的三种方式
-            //1、ViewData 自定义类型需要在 view 中进行 as 转换
-            Employee? model2 = _employeeRepository.GetEmployee(2);
-            ViewData["Employee2"] = model2;
-            ViewData["Title2"] = model2?.Name ?? "空2";
-            //2、ViewBag 自定义类型无智能提示，不需要进行 as 转换
-            Employee? model3 = _employeeRepository.GetEmployee(3);
-            ViewBag.Employee3 = model3;
-            ViewBag.Title3 = model3?.Name ?? "空3";
+            ////界面传参的三种方式
+            ////1、ViewData 自定义类型需要在 view 中进行 as 转换
+            //Employee? model2 = _employeeRepository.GetEmployee(2);
+            //ViewData["Employee2"] = model2;
+            //ViewData["Title2"] = model2?.Name ?? "空2";
+            ////2、ViewBag 自定义类型无智能提示，不需要进行 as 转换
+            //Employee? model3 = _employeeRepository.GetEmployee(3);
+            //ViewBag.Employee3 = model3;
+            //ViewBag.Title3 = model3?.Name ?? "空3";
             //3、Strongly typed 
+            //Employee? model1 = _employeeRepository.GetEmployee(id);            
+            ////return View(model1);
+            ///
+
             Employee? model1 = _employeeRepository.GetEmployee(id);
-            //return View(model1);
+            if (model1 == null)
+            {
+                Response.StatusCode = 404;
+                return View("EmployeeNotFound",id);
+            }
 
             //4、ViewModel
             HomeDetailsViewModel homeDetails = new HomeDetailsViewModel()
@@ -69,11 +81,88 @@ namespace EmployeeManagement.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Employee employee)
+        public IActionResult Create(EmployeeCreateViewModel model)
         {
             if (!ModelState.IsValid) return View();
-            Employee newEmployee = _employeeRepository.Add(employee);
+            string uniqueFileName = ProcessUploadFile(model);
+            Employee newEmployee = new Employee()
+            {
+                Name = model.Name,
+                Email = model.Email,
+                Department = model.Department,
+                PhotoUrl = uniqueFileName
+            };
+
+            _employeeRepository.Add(newEmployee);
             return RedirectToAction("details", new { id = newEmployee.Id });
+        }
+
+        private string ProcessUploadFile(EmployeeCreateViewModel model)
+        {
+            string uniqueFileName = null;
+            if (model.Photo != null)
+            {
+                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                using var fileStream = new FileStream(filePath, FileMode.Create);
+                model.Photo.CopyTo(fileStream);
+            }
+
+            return uniqueFileName;
+        }
+
+        [HttpGet]
+        public ViewResult Edit(int id)
+        {
+            Employee employee = _employeeRepository.GetEmployee(id);
+            EmployeeEditViewModel employeeEditViewModel = new EmployeeEditViewModel
+            {
+                Id = employee.Id,
+                Name = employee.Name,
+                Email = employee.Email,
+                Department = employee.Department,
+                ExistingPhotoUrl = employee.PhotoUrl,
+            };
+            return View(employeeEditViewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Update(EmployeeEditViewModel model)
+        {
+            if (!ModelState.IsValid) return RedirectToAction("edit", new { id = model.Id });
+            Employee newEmployee = _employeeRepository.GetEmployee(model.Id);
+            newEmployee.Id = model.Id;
+            newEmployee.Name = model.Name;
+            newEmployee.Email = model.Email;
+            newEmployee.Department = model.Department;
+            if (model.Photo != null)
+            {
+                if (model.ExistingPhotoUrl != null)
+                {
+                    string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", model.ExistingPhotoUrl);
+                    System.IO.File.Delete(filePath);
+                }
+                newEmployee.PhotoUrl = ProcessUploadFile(model);
+            }
+            _employeeRepository.Update(newEmployee);
+            return RedirectToAction("index");
+
+        }
+
+
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            Employee employee = _employeeRepository.GetEmployee(id);
+            if (employee.PhotoUrl != null)
+            {
+                string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", employee.PhotoUrl);
+                System.IO.File.Delete(filePath);
+            }
+            if (employee == null) return RedirectToAction("index");
+            _employeeRepository.Delete(employee.Id);
+            return RedirectToAction("index");
         }
 
     }

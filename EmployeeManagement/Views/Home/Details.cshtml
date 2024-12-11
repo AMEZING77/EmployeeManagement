@@ -1,10 +1,13 @@
-﻿@* @model EmployeeManagement.Models.Employee *@
+﻿@using System.Diagnostics
+@* @model EmployeeManagement.Models.Employee *@
 @model HomeDetailsViewModel
 
 
 <!--使用Layout-->
 @{
     ViewBag.Title = "Home/Details Page";
+    var photoPath = "~/Images/" + (Model.Employee.PhotoUrl ?? "NoImage.png");
+    Debug.WriteLine(photoPath);
     // Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -68,7 +71,7 @@
             <h1>@Model.Employee.Name</h1>
         </div>
         <div class="card-body text-center">
-            <img class="card-img-top" src="~/images/2.png" />
+            <img class="card-img-top" src=@photoPath asp-append-version="true" />
             <h4>Employee ID : @Model.Employee.Id</h4>
             <h4>Employee Department : @Model.Employee.Department</h4>
             <h4>Employee Email : @Model.Employee.Email</h4>
@@ -76,8 +79,11 @@
         <div class="card-footer text-center">
             @* <a href="#" class="btn btn-primary">Back</a> *@
             <a asp-controller="home" asp-action="Index" class="btn btn-primary">Back</a>
-            <a href="#" class="btn btn-primary">Edit</a>
-            <a href="#" class="btn btn-primary">Delete</a>
+            <a asp-controller="home" asp-action="edit" asp-route-id="@Model.Employee.Id" class="btn btn-primary m-1">Edit</a>
+            <a asp-controller="home"
+               asp-action="delete"
+               asp-route-id="@Model.Employee.Id"
+               class="btn btn-primary m-1">Delete</a>
         </div>
     </div>
 </div>

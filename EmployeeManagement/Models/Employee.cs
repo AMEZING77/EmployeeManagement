@@ -14,6 +14,7 @@ namespace EmployeeManagement.Models
             ErrorMessage = "Invalid Format")]
         public required string Email { get; set; }
         //[Required]//对于值类型来说，有默认的值，因此可以不需要Required
-        public required Dept Department { get; set; }
+        public Dept? Department { get; set; }
+        public string? PhotoUrl { get; set; }
     }
 }

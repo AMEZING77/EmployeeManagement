@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Employee>
+﻿@using System.Diagnostics
+@model IEnumerable<Employee>
 
 <!--使用Layout-->
 @{
@@ -30,23 +31,25 @@
 <div class="card-group">
     @foreach (var item in Model)
     {
-        <div class="card m-3">
+        var photoPath = "~/Images/" + (item.PhotoUrl ?? "NoImage.png");
+        Debug.WriteLine(photoPath);
+
+        <div class="card m-3" style="min-width:18rem;max-width:30.5%;">
             <div class="card-header">
-                <h1>@item.Name</h1>
+                <h1>@item.Name [@item.Id] </h1>
             </div>
-            <img class="card-img-top" src="~/images/2.png" />
+            <img class="card-img-top" src=@photoPath asp-append-version="true" />
             <div class="card-footer text-center">
                 <!--注入链接的几种方式-->
-@*                 <a asp-controller="home" asp-action="details" asp-route-id="@item.Id" class="btn btn-primary">Display</a>
-                <a href=@Url.Action("details", "home", new { id = item.Id }) class="btn btn-primary">View</a>                
-                @Html.ActionLink("View", "details", "home", new { id = item.Id })
-                <a href="#" class="btn btn-primary">View</a>
-                <a href="#" class="btn btn-primary">Edit</a>
-                <a href="#" class="btn btn-primary">Delete</a> *@
+                @*                 <a asp-controller="home" asp-action="details" asp-route-id="@item.Id" class="btn btn-primary">Display</a>
+            <a href=@Url.Action("details", "home", new { id = item.Id }) class="btn btn-primary">View</a>
+            @Html.ActionLink("View", "details", "home", new { id = item.Id })
+            <a href="#" class="btn btn-primary">View</a>
+            <a href="#" class="btn btn-primary">Edit</a>
+            <a href="#" class="btn btn-primary">Delete</a> *@
                 <a asp-controller="home" asp-action="details" asp-route-id="@item.Id" class="btn btn-primary m-1">View</a>
-                <a href="#" class="btn btn-primary m-1">Edit</a>
-                <a href="#" class="btn btn-primary m-1">Delete</a>
-
+                <a asp-controller="home" asp-action="edit" asp-route-id="@item.Id" class="btn btn-primary m-1">Edit</a>
+                <a asp-controller="home" asp-action="delete" asp-route-id="@item.Id" class="btn btn-primary m-1">Delete</a>
             </div>
         </div>
     }
