@@ -2,6 +2,7 @@
 using EmployeeManagement.Models;
 using EmployeeManagement.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace EmployeeManagement.Controllers
 {
@@ -10,12 +11,15 @@ namespace EmployeeManagement.Controllers
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ILogger logger;
 
         public HomeController(IEmployeeRepository employeeRepository,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            ILogger logger)
         {
             this._employeeRepository = employeeRepository;
             this._webHostEnvironment = webHostEnvironment;
+            this.logger = logger;
         }
 
         //默认定义此入口，可以减少 action 的引用
@@ -56,6 +60,13 @@ namespace EmployeeManagement.Controllers
             //Employee? model1 = _employeeRepository.GetEmployee(id);            
             ////return View(model1);
             ///
+            logger.LogTrace("LogTrace");
+            logger.LogDebug("LogDebug");
+            logger.LogInformation("LogInformation");
+            logger.LogWarning("LogWarning");
+            logger.LogError("LogError");
+            logger.LogCritical("LogCritical");
+            throw new Exception("Error in home/details");
 
             Employee? model1 = _employeeRepository.GetEmployee(id);
             if (model1 == null)

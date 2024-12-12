@@ -20,6 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
     //AddSingleton  
     //builder.Services.AddSingleton<IEmployeeRepository, MockEmployeeRepository>();
     builder.Services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>();
+    builder.Services.AddScoped<ILogger, Logger<string>>();
+
     ////AddTransient
     //builder.Services.AddTransient<IEmployeeRepository, MockEmployeeRepository>();
     ////AddScoped
@@ -29,15 +31,23 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 #region 2024/12/05 20:40 如何配置异常界面
 //必须尽早插入
-if (builder.Environment.IsEnvironment("ss"))
-    if (builder.Environment.IsDevelopment())
+//if (builder.Environment.IsEnvironment("ss"))
+if (builder.Environment.IsDevelopment())
+{
+    DeveloperExceptionPageOptions developerExceptionPageOptions = new DeveloperExceptionPageOptions()
     {
-        DeveloperExceptionPageOptions developerExceptionPageOptions = new DeveloperExceptionPageOptions()
-        {
-            SourceCodeLineCount = 3,
-        };
-        app.UseDeveloperExceptionPage(developerExceptionPageOptions);
-    }
+        SourceCodeLineCount = 3,
+    };
+    app.UseDeveloperExceptionPage(developerExceptionPageOptions);
+}
+else
+{
+    app.UseExceptionHandler("/Error");
+    //app.UseStatusCodePages();
+    //不建议使用，应为没有显示出真正的错误返回值
+    //app.UseStatusCodePagesWithRedirects("/Error/{0}");
+    app.UseStatusCodePagesWithReExecute("/Error/{0}");
+}
 #endregion
 
 #region 2024/12/05 21:00 如何导入静态资源
@@ -85,13 +95,12 @@ app.UseStaticFiles() 的作用：
 #region 2024/12/05 21:15 如何配置默认启动页 UseFileServer
 FileServerOptions fileServerOptions = new FileServerOptions();
 fileServerOptions.DefaultFilesOptions.DefaultFileNames.Clear();
-fileServerOptions.DefaultFilesOptions.DefaultFileNames.Add("abc.html");
-app.UseFileServer(fileServerOptions);
-
+fileServerOptions.DefaultFilesOptions.DefaultFileNames.Add("123.html");
+//app.UseFileServer(fileServerOptions);
 
 //若此时输入其他Index,则默认转向下面的中间件
 //app.UseMvcWithDefaultRoute();
-
+//app.UseStaticFiles();
 //使用自定义路由
 app.UseMvc(routes =>
 {
@@ -120,17 +129,17 @@ app.UseMvc(routes =>
 //    await context.Response.WriteAsync("Hello One");
 //    await next();
 //});
-app.Use(async (context, next) =>
-{
-    app.Logger.LogInformation("Middleware 1 started");
-    app.Logger.LogInformation("Middleware 1 finished writing response");
-    await next();
-});
-app.Use(async (context, next) =>
-{
-    throw new Exception("An error occurred in Middleware 2");
-    await next();
-});
+//app.Use(async (context, next) =>
+//{
+//    app.Logger.LogInformation("Middleware 1 started");
+//    app.Logger.LogInformation("Middleware 1 finished writing response");
+//    await next();
+//});
+//app.Use(async (context, next) =>
+//{
+//    throw new Exception("An error occurred in Middleware 2");
+//    await next();
+//});
 #endregion
 
 app.Run();
