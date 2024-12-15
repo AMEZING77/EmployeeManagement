@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;//to use IdentityDbContext
+using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagement.Models
 {
@@ -27,7 +28,7 @@ namespace EmployeeManagement.Models
      * 
      * 为了使用这个 AppDbContext 类，你需要在 ASP.NET Core 应用的启动配置中注册它，并配置数据库连接
     */
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
@@ -39,6 +40,7 @@ namespace EmployeeManagement.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Seed();
         }
 

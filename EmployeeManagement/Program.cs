@@ -1,4 +1,5 @@
 using EmployeeManagement.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +12,11 @@ var builder = WebApplication.CreateBuilder(args);
     {
         options.UseSqlServer(builder.Configuration.GetConnectionString("EmployeeDBConnection"));
     });
+    //继承 IdentityUser ，实现想要封装的用户属性
+    builder.Services
+        .AddIdentity<IdentityUser, IdentityRole>()
+        .AddEntityFrameworkStores<AppDbContext>();
+
     //如何配置 mvc 的 Service
     builder.Services.Configure<MvcOptions>(options => options.EnableEndpointRouting = false);
     builder.Services.AddMvc()/*.AddXmlDataContractSerializerFormatters()*/;
@@ -100,7 +106,9 @@ fileServerOptions.DefaultFilesOptions.DefaultFileNames.Add("123.html");
 
 //若此时输入其他Index,则默认转向下面的中间件
 //app.UseMvcWithDefaultRoute();
-//app.UseStaticFiles();
+//界面加载资源（否则布局css无效）
+app.UseStaticFiles();
+app.UseAuthentication();
 //使用自定义路由
 app.UseMvc(routes =>
 {
